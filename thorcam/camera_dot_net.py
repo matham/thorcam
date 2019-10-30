@@ -28,7 +28,8 @@ import thorcam
 from thorcam.camera import yaml_loads, yaml_dumps, connection_errors, \
     EndConnection, ThorCamBase
 
-import clr, System
+import clr
+import System
 from System import Array, Int32
 from System.Runtime.InteropServices import GCHandle, GCHandleType
 
@@ -39,16 +40,16 @@ __all__ = ('TSICamera', 'ThorCamServer')
 warnings.simplefilter('ignore', ruamel.yaml.error.MantissaNoDotYAML1_1Warning)
 
 _MAP_NET_NP = {
-    'Single' : np.dtype('float32'),
-    'Double' : np.dtype('float64'),
-    'SByte'  : np.dtype('int8'),
-    'Int16'  : np.dtype('int16'),
-    'Int32'  : np.dtype('int32'),
-    'Int64'  : np.dtype('int64'),
-    'Byte'   : np.dtype('uint8'),
-    'UInt16' : np.dtype('uint16'),
-    'UInt32' : np.dtype('uint32'),
-    'UInt64' : np.dtype('uint64'),
+    'Single': np.dtype('float32'),
+    'Double': np.dtype('float64'),
+    'SByte': np.dtype('int8'),
+    'Int16': np.dtype('int16'),
+    'Int32': np.dtype('int32'),
+    'Int64': np.dtype('int64'),
+    'Byte': np.dtype('uint8'),
+    'UInt16': np.dtype('uint16'),
+    'UInt32': np.dtype('uint32'),
+    'UInt64': np.dtype('uint64'),
     'Boolean': np.dtype('bool'),
 }
 
@@ -75,7 +76,8 @@ def as_numpy_array(netArray):
         destPtr = npArray.__array_interface__['data'][0]
         ctypes.memmove(destPtr, sourcePtr, npArray.nbytes)
     finally:
-        if sourceHandle.IsAllocated: sourceHandle.Free()
+        if sourceHandle.IsAllocated:
+            sourceHandle.Free()
     return npArray
 
 
@@ -189,7 +191,8 @@ class TSICamera(ThorCamBase):
 
         d['frame_queue_size'] = cam.get_MaximumNumberOfFramesToQueue()
         d['trigger_count'] = cam.get_FramesPerTrigger_zeroForUnlimited()
-        hw_mode = cam.get_OperationMode() == self.tsi_interface.OperationMode.HardwareTriggered
+        hw_mode = cam.get_OperationMode() == \
+                  self.tsi_interface.OperationMode.HardwareTriggered
         d['trigger_type'] = self.supported_triggers[1 if hw_mode else 0]
 
         rang = cam.get_GainRange()
@@ -200,8 +203,10 @@ class TSICamera(ThorCamBase):
         d['black_level_range'] = rang.Minimum, rang.Maximum
         d['black_level'] = cam.get_BlackLevel()
 
-        if cam.GetIsDataRateSupported(self.tsi_interface.DataRate.ReadoutSpeed20MHz):
-            if cam.GetIsDataRateSupported(self.tsi_interface.DataRate.ReadoutSpeed40MHz):
+        if cam.GetIsDataRateSupported(
+                self.tsi_interface.DataRate.ReadoutSpeed20MHz):
+            if cam.GetIsDataRateSupported(
+                    self.tsi_interface.DataRate.ReadoutSpeed40MHz):
                 d['supported_freqs'] = ['20 MHz', '40 MHz']
             else:
                 d['supported_freqs'] = ['20 MHz', ]
@@ -242,12 +247,14 @@ class TSICamera(ThorCamBase):
             cam.set_ExposureTime_us(value)
             value = value / 1000.
         elif setting == 'binning_x':
-            value = max(min(value, self.binning_x_range[1]), self.binning_x_range[0])
+            value = max(min(
+                value, self.binning_x_range[1]), self.binning_x_range[0])
             roi_bin = cam.get_ROIAndBin()
             roi_bin.BinX = value
             cam.set_ROIAndBin(roi_bin)
         elif setting == 'binning_y':
-            value = max(min(value, self.binning_y_range[1]), self.binning_y_range[0])
+            value = max(min(
+                value, self.binning_y_range[1]), self.binning_y_range[0])
             roi_bin = cam.get_ROIAndBin()
             roi_bin.BinY = value
             cam.set_ROIAndBin(roi_bin)
@@ -286,17 +293,21 @@ class TSICamera(ThorCamBase):
         elif setting == 'trigger_type':
             hw_mode = value == self.supported_triggers[1]
             cam.set_OperationMode(
-                self.tsi_interface.OperationMode.HardwareTriggered if hw_mode else
+                self.tsi_interface.OperationMode.HardwareTriggered
+                if hw_mode else
                 self.tsi_interface.OperationMode.SoftwareTriggered)
         elif setting == 'trigger_count':
             cam.set_FramesPerTrigger_zeroForUnlimited(max(0, value))
         elif setting == 'frame_queue_size':
             cam.set_MaximumNumberOfFramesToQueue(max(1, value))
         elif setting == 'gain':
-            value = int(max(min(value, self.gain_range[1]), self.gain_range[0]))
+            value = int(
+                max(min(value, self.gain_range[1]), self.gain_range[0]))
             cam.set_Gain(value)
         elif setting == 'black_level':
-            value = int(max(min(value, self.black_level_range[1]), self.black_level_range[0]))
+            value = int(max(
+                min(value, self.black_level_range[1]),
+                self.black_level_range[0]))
             cam.set_BlackLevel(value)
         elif setting == 'freq':
             cam.set_DataRate(self._str_to_freqs_map[value])
@@ -441,7 +452,7 @@ class TSICamera(ThorCamBase):
                     if cam.IsArmed:
                         cam.Disarm()
                     cam.Dispose()
-            except:
+            except Exception:
                 pass
         finally:
             from_cam_queue.put(('cam_closed', None))
@@ -667,7 +678,6 @@ class ThorCamServer(object):
     def server_run(self):
         """The mean server thread."""
         timeout = self.timeout
-        cam = None
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

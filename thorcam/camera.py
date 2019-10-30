@@ -188,7 +188,7 @@ class ThorCamClient(ThorCamBase):
     """The full path to where the Thor .NET binaries are located.
 
     We use this path to locate and load the .NET interface to the camera.
-    This path must contain at least the following two dlls: 
+    This path must contain at least the following two dlls:
     ``Thorlabs.TSI.TLCamera.dll`` and ``Thorlabs.TSI.TLCameraInterfaces.dll``.
 
     It defaults to the path in :attr:`thorcam.dep_bins` because that's where

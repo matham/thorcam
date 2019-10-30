@@ -1,4 +1,8 @@
-# thorcam
+ThorCam
+==========
+
+[![Github Build Status](https://github.com/matham/thorcam/workflows/Python%20application/badge.svg)](https://github.com/matham/thorcam/actions)
+
 Python interface for the Thor scientific Cameras using .Net.
 
 For more information and to get started: https://matham.github.io/thorcam/index.html.

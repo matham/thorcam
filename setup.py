@@ -2,8 +2,7 @@ from setuptools import setup, find_packages
 from io import open
 from os import path
 from os.path import join, isdir
-from os import listdir, environ, walk
-import pathlib
+from os import listdir, environ
 
 from thorcam import __version__
 
