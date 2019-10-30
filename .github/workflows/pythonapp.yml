@@ -91,12 +91,8 @@ jobs:
         cp -r doc/build/html ~/docs_temp
 
         git checkout --progress --force --orphan gh-pages
-        cp -r .git ~/docs_git
-        cd ..
-        rm -r thorcam
-        mkdir thorcam
-        cd thorcam
-        cp -r ~/docs_git .git
+        git rm -rf .
+        Remove-Item -recurse * -exclude .git
         cp -r ~/docs_temp/* .
         echo "" > .nojekyll
 
