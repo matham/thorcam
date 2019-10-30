@@ -1,6 +1,6 @@
 name: Python application
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint_test:
@@ -94,7 +94,7 @@ jobs:
           cd doc
           ./make.bat html
       - name: gh-pages upload
-          if: github.ref == 'refs/heads/master' && matrix.python == '3.7'
+          if: github.event_name == 'push' && github.ref == 'refs/heads/master'
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
