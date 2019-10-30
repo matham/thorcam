@@ -98,8 +98,6 @@ jobs:
 
         $env:GIT_TRACE=1
         echo "Configuring git"
-        git remote rm origin
-        git remote add origin "https://x-access-token:$env:GITHUB_TOKEN@github.com/matham/thorcam.git"
         echo "Configured git"
 
         git add .
