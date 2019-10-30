@@ -24,18 +24,31 @@ jobs:
     strategy:
       matrix:
         python: [ '3.6', '3.7' ]
+        arch: ['x64', 'x86']
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python }}
+          architecture: ${{ matrix.arch }}
+      - name: Get dependencies
+        run: |
+          Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces_07-11-2019.zip" -OutFile "Scientific_Camera_Interfaces_07-11-2019.zip"
+          7z x "Scientific_Camera_Interfaces_07-11-2019.zip"
       - name: Install
         run: |
           python -m pip install --upgrade pip virtualenv wheel setuptools pytest
           python -m pip install -e .
       - name: Test with pytest
         run: |
+          if ("${{ matrix.arch }}" -eq "x64") {
+            $env:THORCAM_NET_BIN_PATH = ".\Scientific Camera Interfaces\SDK\DotNet Toolkit\dlls\Managed_64_lib"
+          } else {
+            $env:THORCAM_NET_BIN_PATH = ".\Scientific Camera Interfaces\SDK\DotNet Toolkit\dlls\Managed_32_lib"
+          }
+          echo "THORCAM_NET_BIN_PATH=$env:THORCAM_NET_BIN_PATH"
+
           python -m pytest thorcam/tests
 
   windows_wheels:
@@ -52,14 +65,12 @@ jobs:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.arch }}
     - name: Get dependencies
-      env:
-        ZIP_PASS: ${{ secrets.ZIP_PASS }}
       run: |
         Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces_07-11-2019.zip" -OutFile "Scientific_Camera_Interfaces_07-11-2019.zip"
         7z x "Scientific_Camera_Interfaces_07-11-2019.zip"
     - name: Make wheel
       run: |
-        if (${{ matrix.arch }} -eq "x64") {
+        if ("${{ matrix.arch }}" -eq "x64") {
           $env:THORCAM_WHEEL_DEPS = ".\Scientific Camera Interfaces\SDK\DotNet Toolkit\dlls\Managed_64_lib"
         } else {
           $env:THORCAM_WHEEL_DEPS = ".\Scientific Camera Interfaces\SDK\DotNet Toolkit\dlls\Managed_32_lib"
@@ -89,7 +100,6 @@ jobs:
         python -m pip install --upgrade pip virtualenv wheel setuptools sphinx
         python -m pip install -e .
     - name: Generate docs
-      if: github.ref == 'refs/heads/master' && matrix.python == '3.7'
       run: |
         cd doc
         ./make.bat html

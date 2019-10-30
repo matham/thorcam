@@ -7,6 +7,7 @@ Python interface to the .NET Thor cameras.
 __version__ = '0.1.0.dev0'
 
 import sys
+import os
 from os.path import join, isdir
 
 __all__ = ('dep_bins', )
@@ -15,13 +16,19 @@ dep_bins = []
 '''A list of paths to the binaries used by the library. It can be used during
 packaging for including required binaries.
 
-The first entry is ``share/thorcam/bin``, if that path exists. That's
-the path used by default to locate the Thor .NET binaries. The wheel
+If ``THORCAM_NET_BIN_PATH`` is specified in the environment, then we use
+that path for the binaries and it's added as the first entry.
+
+Otherwise, the first entry is ``share/thorcam/bin``, if that path exists.
+That's the path used by default to locate the Thor .NET binaries. The wheel
 provides these binaries at that path, or they can be manually added there.
 
 It is read only.
 '''
 
 _bins = join(sys.prefix, 'share', 'thorcam', 'bin')
-if isdir(_bins):
+_env_bins = os.environ.get('THORCAM_NET_BIN_PATH', None)
+if _env_bins is not None and isdir(_env_bins):
+    dep_bins = [_env_bins]
+elif isdir(_bins):
     dep_bins = [_bins]
