@@ -1,4 +1,4 @@
-.. thorcam-root-api:
+.. _thorcam-root-api:
 
 ########################
   The ThorCam API

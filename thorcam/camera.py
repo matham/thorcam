@@ -220,6 +220,9 @@ class ThorCamClient(ThorCamBase):
         if self._server_thread is not None:
             return
 
+        if self.port is None:
+            self.port = self._get_open_port()
+
         thread = self._server_thread = Thread(target=self.cam_process)
         thread.start()
 
@@ -248,14 +251,10 @@ class ThorCamClient(ThorCamBase):
         """
         script = os.path.join(os.path.dirname(__file__), 'camera_dot_net.py')
         try:
-            port = self.port
-            if port is None:
-                port = self._get_open_port()
-
             subprocess.run(
                 [sys.executable, script,
                  str(logging.getLogger().getEffectiveLevel()),
-                 self.thor_bin_path, self.server, str(port),
+                 self.thor_bin_path, self.server, str(self.port),
                  str(self.timeout)],
                 stderr=subprocess.PIPE, stdout=sys.stdout, check=True,
                 universal_newlines=True)
@@ -469,7 +468,7 @@ class ThorCam(ThorCamClient):
         elif msg == 'exception':
             self.handle_exception(*value)
         elif msg == 'image':
-            self.got_image(self.create_image_from_msg(*value))
+            self.got_image(*self.create_image_from_msg(value))
 
     def got_image(self, image, count, queued_count, t):
         """Called when we get an image from the server.
@@ -517,7 +516,7 @@ class ThorCam(ThorCamClient):
     def set_setting(self, name, value):
         """Requests that the setting should be changed for the camera.
 
-        :param name: The setting name to be changed. E.g.``"exposure_ms"``.
+        :param name: The setting name to be changed. E.g. ``"exposure_ms"``.
         :param value: The new setting value.
         """
         self.send_camera_request('setting', (name, value))
