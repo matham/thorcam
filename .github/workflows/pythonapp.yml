@@ -96,9 +96,7 @@ jobs:
         git config --global user.name "Matthew Einhorn"
 
         echo "Switching to gh-pages"
-        ls
-        git status
-        git checkout --orphan gh-pages
+        git checkout --progress --force --orphan gh-pages
         echo "Switched to gh-pages"
         cp -r .git ~/docs_git
         echo "Copied git back"
