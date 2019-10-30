@@ -87,19 +87,24 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        echo "Starting upload"
         cp -r doc/build/html ~/docs_temp
 
+        echo "Configuring git"
         git config --global credential.helper store
         Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GITHUB_TOKEN):x-oauth-basic@github.com`n"
         git config --global user.email "moiein2000@gmail.com"
         git config --global user.name "Matthew Einhorn"
 
+        echo "Switching to gh-pages"
         git checkout --orphan gh-pages
+        echo "Switched to gh-pages"
         cp -r .git ~/docs_git
         cd ..
         rm -rf thorcam
         mkdir thorcam
         cd thorcam
+        echo "Copying files back"
         cp -r ~/docs_git .git
         cp -r ~/docs_temp/* .
         echo "" > .nojekyll
