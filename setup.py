@@ -5,6 +5,19 @@ from os.path import join, isdir
 from os import listdir, environ
 
 from thorcam import __version__
+from setuptools.dist import Distribution
+
+
+class BinaryDistribution(Distribution):
+    """Wheels need to be generated for each arch.
+    """
+
+    def is_pure(self):
+        return False
+
+    def has_ext_modules(self):
+        return True
+
 
 here = path.abspath(path.dirname(__file__))
 
@@ -47,6 +60,7 @@ setup(
     packages=find_packages(),
     install_requires=['ffpyplayer', 'pythonnet', 'numpy', 'ruamel.yaml'],
     data_files=get_wheel_data(),
+    distclass=BinaryDistribution,
     project_urls={
         'Bug Reports': URL + '/issues',
         'Source': URL,
