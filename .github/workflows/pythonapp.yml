@@ -87,8 +87,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        mkdir "C:\docs_temp"
-        Copy-Item "doc\build\html\*" "C:\docs_temp" -recurse
+        cp -r doc/build/html ~/docs_temp
 
         git config --global user.email "moiein2000@gmail.com"
         git config --global user.name "Matthew Einhorn"
@@ -96,9 +95,13 @@ jobs:
         git remote add origin "https://x-access-token:$env:GITHUB_TOKEN@github.com/matham/thorcam.git"
 
         git checkout --orphan gh-pages
-        git rm -rf .
-        Remove-Item -recurse * -exclude .git
-        Copy-Item "C:\docs_temp\*" .  -recurse
+        cp -r .git ~/docs_git
+        cd ..
+        rm -rf thorcam
+        mkdir thorcam
+        cd thorcam
+        cp -r ~/docs_git .git
+        cp -r ~/docs_temp/* .
         echo "" > .nojekyll
 
         git add .
