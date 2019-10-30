@@ -23,17 +23,17 @@ import logging
 from os.path import join
 import struct
 import ruamel.yaml
+import warnings
 
 import thorcam
 from thorcam.camera import yaml_loads, yaml_dumps, connection_errors, \
     EndConnection, ThorCamBase
 
-import clr
-import System
-from System import Array, Int32
-from System.Runtime.InteropServices import GCHandle, GCHandleType
-
-import warnings
+if os.environ.get('THORCAM_DOCS_GEN') != '1':
+    import clr
+    import System
+    from System import Array, Int32
+    from System.Runtime.InteropServices import GCHandle, GCHandleType
 
 __all__ = ('TSICamera', 'ThorCamServer')
 
