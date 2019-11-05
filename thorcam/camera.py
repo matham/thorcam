@@ -460,7 +460,7 @@ class ThorCam(ThorCamClient):
             self.cam_open = False
         elif msg == 'playing':
             self.cam_playing = value
-        elif msg == 'settings':
+        elif msg in ('settings', 'setting'):
             for key, val in value.items():
                 setattr(self, key, val)
         elif msg == 'serials':

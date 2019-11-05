@@ -32,7 +32,7 @@ from thorcam.camera import yaml_loads, yaml_dumps, connection_errors, \
 if os.environ.get('THORCAM_DOCS_GEN') != '1':
     import clr
     import System
-    from System import Array, Int32
+    from System import Array, Int32, UInt16, Int32
     from System.Runtime.InteropServices import GCHandle, GCHandleType
 
 __all__ = ('TSICamera', 'ThorCamServer')
@@ -97,6 +97,14 @@ class TSICamera(ThorCamBase):
     """The .NET interface. See :attr:`ThorCamServer.tsi_interface`
     """
 
+    tsi_color_sdk = None
+    """The Thor .NET ColorProcessorSDK interface object.
+    """
+
+    tsi_demosaicker = None
+    """The Thor .NET Demosaicker module.
+    """
+
     serial = ''
     """The serial of this camera.
     """
@@ -114,7 +122,8 @@ class TSICamera(ThorCamBase):
     """The queue that the camera uses to send requests to the server.
 
     The camera queue may send the following to the client:
-    `exception`, `cam_closed`, `image`, `playing`, `cam_open`, or `settings`.
+    `exception`, `cam_closed`, `image`, `playing`, `cam_open`,
+    `setting`, or `settings`.
 
     See :class:`ThorCamServer` for details.
     """
@@ -131,9 +140,16 @@ class TSICamera(ThorCamBase):
 
     _str_to_taps_map = {}
 
-    def __init__(self, tsi_sdk, tsi_interface, serial):
+    _color_processor = None
+
+    _demosaic = None
+
+    def __init__(self, tsi_sdk, tsi_interface, tsi_color_sdk,
+                 tsi_demosaicker, serial):
         self.tsi_sdk = tsi_sdk
         self.tsi_interface = tsi_interface
+        self.tsi_color_sdk = tsi_color_sdk
+        self.tsi_demosaicker = tsi_demosaicker
         self.serial = serial
         self._freqs_to_str_map = {
             tsi_interface.DataRate.ReadoutSpeed20MHz: '20 MHz',
@@ -231,6 +247,9 @@ class TSICamera(ThorCamBase):
         else:
             d['taps'] = ''
 
+        d['supports_color'] = cam.get_CameraSensorType() == \
+            self.tsi_interface.CameraSensorType.Bayer
+
         d['color_gain'] = self.color_gain
 
         for key, val in d.items():
@@ -314,15 +333,14 @@ class TSICamera(ThorCamBase):
         elif setting == 'taps' and value:
             cam.set_Taps(self._str_to_taps_map[value])
         elif setting == 'color_gain':
-            r, g, b = value
-            mat = [r, 0, 0, 0, g, 0, 0, 0, b]
-            color_pipeline = self.tsi_interface.ColorPipeline()
-            color_pipeline.set_ColorMode(
-                self.tsi_interface.ColorMode.StandardRGB)
-            color_pipeline.InsertColorTransformMatrix(0, mat)
-            color_pipeline.InsertColorTransformMatrix(
-                1, cam.GetCameraColorCorrectionMatrix())
-            cam.set_ColorPipelineOrNull(color_pipeline)
+            if self.supports_color:
+                r, g, b = value
+                mat = [r, 0, 0, 0, g, 0, 0, 0, b]
+
+                self._color_processor.RemoveColorTransformMatrix(0)
+                self._color_processor.InsertColorTransformMatrix(0, mat)
+            else:
+                value = [1, 1, 1]
         values[setting] = value
 
         for key, val in values.items():
@@ -348,13 +366,31 @@ class TSICamera(ThorCamBase):
         count = frame.FrameNumber
         h = frame.ImageData.Height_pixels
         w = frame.ImageData.Width_pixels
-        color = frame.ImageData.NumberOfChannels == 3
-        data = as_numpy_array(frame.ImageData.ImageData_monoOrBGR)
+        if self._color_processor is not None:
+            from Thorlabs.TSI import ColorInterfaces
+            demosaicked_data = Array.CreateInstance(UInt16, h * w * 3)
+            processed_data = Array.CreateInstance(UInt16, h * w * 3)
+            fmt = ColorInterfaces.ColorFormat.BGRPixel
+            max_pixel_val = int(2 ** cam.BitDepth - 1)
+
+            self._demosaic.Demosaic(
+                w, h, Int32(0), Int32(0), cam.ColorFilterArrayPhase,
+                fmt, ColorInterfaces.ColorSensorType.Bayer,
+                Int32(cam.BitDepth), frame.ImageData.ImageData_monoOrBGR, demosaicked_data)
+
+            self._color_processor.Transform48To48(demosaicked_data, fmt,
+                0, max_pixel_val, 0, max_pixel_val,
+                0, max_pixel_val, 0, 0, 0, processed_data, fmt)
+
+            pixel_fmt = 'bgr48le'
+            data = as_numpy_array(processed_data)
+        else:
+            pixel_fmt = 'gray16le'
+            data = as_numpy_array(frame.ImageData.ImageData_monoOrBGR)
         # img = Image(
         #     plane_buffers=[data.tobytes()],
-        #     pix_fmt='bgr48le' if color else 'gray16le', size=(w, h))
-        return data.tobytes(), 'bgr48le' if color else 'gray16le', (w, h), \
-            count, queued_count, t
+        #     pix_fmt=pixel_fmt, size=(w, h))
+        return data.tobytes(), pixel_fmt, (w, h), count, queued_count, t
 
     def verify_setting(self, playing, from_cam_queue, setting, value):
         """Checks whether the setting can be set currently, given the
@@ -393,6 +429,16 @@ class TSICamera(ThorCamBase):
         try:
             cam = self.tsi_sdk.OpenCamera(self.serial, False)
             settings = self.read_settings(cam)
+            if self.supports_color:
+                self._color_processor = self.tsi_color_sdk.\
+                    CreateStandardRGBColorProcessor(
+                        cam.GetDefaultWhiteBalanceMatrix(),
+                        cam.GetCameraColorCorrectionMatrix(),
+                        cam.BitDepth)
+                mat = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+                self._color_processor.InsertColorTransformMatrix(0, mat)
+                self._demosaic = self.tsi_demosaicker()
+
             from_cam_queue.put(('settings', settings))
             from_cam_queue.put(('cam_open', None))
             self.write_setting(cam, 'c_gain', (10, 0, 0))
@@ -412,7 +458,7 @@ class TSICamera(ThorCamBase):
                             elif msg == 'setting':
                                 if verify(True, from_cam_queue, *value):
                                     from_cam_queue.put(
-                                        ('settings',
+                                        ('setting',
                                          self.write_setting(cam, *value)))
                         except Empty:
                             break
@@ -438,24 +484,25 @@ class TSICamera(ThorCamBase):
                     elif msg == 'setting':
                         if verify(False, from_cam_queue, *value):
                             from_cam_queue.put(
-                                ('settings', self.write_setting(cam, *value)))
+                                ('setting', self.write_setting(cam, *value)))
 
-            if cam.IsArmed:
-                cam.Disarm()
-            cam.Dispose()
         except Exception as e:
             exc_info = ''.join(traceback.format_exception(*sys.exc_info()))
             from_cam_queue.put(('exception', (str(e), exc_info)))
 
+        finally:
+            from_cam_queue.put(('cam_closed', None))
             try:
                 if cam is not None:
                     if cam.IsArmed:
                         cam.Disarm()
                     cam.Dispose()
+                if self._demosaic is not None:
+                    self._demosaic.Dispose()
+                if self._color_processor is not None:
+                    self._color_processor.Dispose()
             except Exception:
                 pass
-        finally:
-            from_cam_queue.put(('cam_closed', None))
         logging.info('TSICamera: exiting')
 
 
@@ -506,7 +553,11 @@ class ThorCamServer(object):
             Whether the camera is playing. ``value`` is a bool indicating
             whether it started stopped playing.
         `settings`: dict of ``setting: value``
-            The settings value. A dict of settings and their values.
+            The settings value. A dict of settings and their values. Sent after
+            camera is opened
+        `setting`: dict of ``setting: value``
+            The settings value. A dict of settings and their values. Send when
+            a setting is updated.
         `"serials"`: List of serials
             Sends the list of cameras attached as list of serial number
             strings.
@@ -518,6 +569,14 @@ class ThorCamServer(object):
 
     tsi_interface = None
     """The Thor .NET interface object.
+    """
+
+    tsi_color_sdk = None
+    """The Thor .NET ColorProcessorSDK interface object.
+    """
+
+    tsi_demosaicker = None
+    """The Thor .NET Demosaicker module.
     """
 
     tsi_cam = None
@@ -572,19 +631,24 @@ class ThorCamServer(object):
             join(thor_bin_path, 'Thorlabs.TSI.TLCamera.dll'))
         clr.AddReference(
             join(thor_bin_path, 'Thorlabs.TSI.TLCameraInterfaces.dll'))
+        clr.AddReference(
+            join(thor_bin_path, 'Thorlabs.TSI.Demosaicker.dll'))
+        clr.AddReference(
+            join(thor_bin_path, 'Thorlabs.TSI.ColorProcessor.dll'))
         from Thorlabs.TSI.TLCamera import TLCameraSDK
         import Thorlabs.TSI.TLCameraInterfaces as tsi_interface
         self.tsi_sdk = TLCameraSDK.OpenTLCameraSDK()
         self.tsi_interface = tsi_interface
-        # seems to be needed
-        tsi_interface.CameraSensorType
+
+        # Initialize the demosaicker
+        from Thorlabs.TSI.Demosaicker import Demosaicker as demosaicker
+        self.tsi_demosaicker = demosaicker
+        from Thorlabs.TSI.ColorProcessor import ColorProcessorSDK
+        self.tsi_color_sdk = ColorProcessorSDK()
 
     def get_tsi_cams(self):
         """Returns the list of serial numbers of the cameras attached."""
         cams = self.tsi_sdk.DiscoverAvailableCameras()
-        names = []
-        for i in range(cams.get_Count()):
-            names.append(cams.get_Item(i))
         return list(sorted(cams))
 
     def send_msg(self, sock, msg, value):
@@ -657,7 +721,8 @@ class ThorCamServer(object):
 
                 self.tsi_cam = TSICamera(
                     tsi_sdk=self.tsi_sdk, tsi_interface=self.tsi_interface,
-                    serial=value)
+                    tsi_color_sdk=self.tsi_color_sdk,
+                    tsi_demosaicker=self.tsi_demosaicker, serial=value)
             elif msg == 'eof':
                 return 'eof'
             elif msg == 'serials':
@@ -730,8 +795,15 @@ class ThorCamServer(object):
                 if self.tsi_cam.camera_thread is not None:
                     self.tsi_cam.camera_thread.join()
 
-            logging.info('ThorCamServer: closing socket')
-            sock.close()
+            try:
+                if self.tsi_sdk is not None:
+                    self.tsi_sdk.Dispose()
+
+                if self.tsi_color_sdk is not None:
+                    self.tsi_color_sdk.Dispose()
+            finally:
+                logging.info('ThorCamServer: closing socket')
+                sock.close()
 
 
 if __name__ == '__main__':
