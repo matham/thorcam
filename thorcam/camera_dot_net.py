@@ -376,7 +376,8 @@ class TSICamera(ThorCamBase):
             self._demosaic.Demosaic(
                 w, h, Int32(0), Int32(0), cam.ColorFilterArrayPhase,
                 fmt, ColorInterfaces.ColorSensorType.Bayer,
-                Int32(cam.BitDepth), frame.ImageData.ImageData_monoOrBGR, demosaicked_data)
+                Int32(cam.BitDepth), frame.ImageData.ImageData_monoOrBGR,
+                demosaicked_data)
 
             self._color_processor.Transform48To48(demosaicked_data, fmt,
                 0, max_pixel_val, 0, max_pixel_val,
