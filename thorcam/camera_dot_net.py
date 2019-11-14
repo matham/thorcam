@@ -32,7 +32,7 @@ from thorcam.camera import yaml_loads, yaml_dumps, connection_errors, \
 if os.environ.get('THORCAM_DOCS_GEN') != '1':
     import clr
     import System
-    from System import Array, Int32, UInt16, Int32
+    from System import Array, Int32, UInt16
     from System.Runtime.InteropServices import GCHandle, GCHandleType
 
 __all__ = ('TSICamera', 'ThorCamServer')
