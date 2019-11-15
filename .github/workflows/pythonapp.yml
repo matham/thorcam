@@ -32,6 +32,11 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.arch }}
+    - name: Make sdist
+      if: matrix.arch == 'x64' && matrix.python == '3.7'
+      run: |
+        python -m pip install --upgrade pip virtualenv wheel setuptools
+        python setup.py sdist
     - name: Get dependencies
       run: |
         Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces_07-11-2019.zip" -OutFile "Scientific_Camera_Interfaces_07-11-2019.zip"
