@@ -420,7 +420,8 @@ class ThorCamClient(ThorCamBase):
         """Requests that the server and client threads/process close.
         If ``join``, we block here until the threads/process exit.
         """
-        self.send_camera_request('eof')
+        if self._server_thread is not None:
+            self.send_camera_request('eof')
         if join:
             client = self._client_thread
             process_thread = self._server_thread
