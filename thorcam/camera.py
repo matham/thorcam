@@ -14,21 +14,20 @@ overwrite them with a different version, see
 :attr:`ThorCamClient.thor_bin_path`.
 
 """
-import subprocess
 import struct
 import select
 import traceback
 from queue import Queue, Empty
 from time import perf_counter as clock
-import os
 import sys
 from threading import Thread
 from io import StringIO
 import socket
-import logging
 from ruamel.yaml import YAML
 import thorcam
 import ruamel.yaml
+import logging
+import multiprocessing
 
 from ffpyplayer.pic import Image
 
@@ -37,6 +36,39 @@ warnings.simplefilter('ignore', ruamel.yaml.error.MantissaNoDotYAML1_1Warning)
 
 __all__ = ('yaml_dumps', 'yaml_loads', 'EndConnection', 'connection_errors',
            'ThorCamBase', 'ThorCamClient', 'ThorCam')
+
+
+def camera_dot_net_process_entry(
+        log_level, thor_bin_path, server, port, timeout):
+    logging.getLogger().setLevel(log_level)
+    from thorcam.camera_dot_net import ThorCamServer
+
+    server = ThorCamServer(thor_bin_path, server, port, timeout)
+
+    if server.server_thread is not None:
+        server.server_thread.join()
+
+
+class ThorCamProcess(multiprocessing.Process):
+    def __init__(self, *args, **kwargs):
+        super(ThorCamProcess, self).__init__(*args, **kwargs)
+        self._pconn, self._cconn = multiprocessing.Pipe()
+        self._exception = None
+
+    def run(self):
+        try:
+            super(ThorCamProcess, self).run()
+            self._cconn.send(None)
+        except Exception as e:
+            tb = traceback.format_exc()
+            self._cconn.send((e, tb))
+            raise
+
+    @property
+    def exception(self):
+        if self._pconn.poll():
+            self._exception = self._pconn.recv()
+        return self._exception
 
 
 def yaml_dumps(value):
@@ -249,18 +281,18 @@ class ThorCamClient(ThorCamBase):
     def cam_process(self):
         """The thread that runs the camera server process.
         """
-        script = os.path.join(os.path.dirname(__file__), 'camera_dot_net.py')
         try:
-            subprocess.run(
-                [sys.executable, script,
-                 str(logging.getLogger().getEffectiveLevel()),
-                 self.thor_bin_path, self.server, str(self.port),
-                 str(self.timeout)],
-                stderr=subprocess.PIPE, stdout=sys.stdout, check=True,
-                universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            exc_info = e.stderr
-            self.process_exited(e, exc_info)
+            process = ThorCamProcess(
+                target=camera_dot_net_process_entry,
+                args=(
+                    logging.getLogger().getEffectiveLevel(),
+                    self.thor_bin_path, self.server, self.port, self.timeout
+                )
+            )
+            process.start()
+            process.join()
+            if process.exception:
+                self.process_exited(*process.exception)
         except Exception as e:
             exc_info = ''.join(
                 traceback.format_exception(*sys.exc_info()))

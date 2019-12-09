@@ -32,3 +32,5 @@ if _env_bins is not None and isdir(os.path.abspath(_env_bins)):
     dep_bins = [os.path.abspath(_env_bins)]
 elif isdir(_bins):
     dep_bins = [_bins]
+elif hasattr(sys, '_MEIPASS'):
+    dep_bins = [os.path.abspath(sys._MEIPASS)]
