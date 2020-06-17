@@ -43,7 +43,7 @@ jobs:
         7z x "Scientific_Camera_Interfaces_07-11-2019.zip"
     - name: Install
       run: |
-        python -m pip install --upgrade pip virtualenv wheel setuptools pytest
+        python -m pip install --upgrade pip virtualenv wheel setuptools pytest pytest-timeout
         python -m pip install -e .
     - name: Make wheel
       run: |
@@ -78,7 +78,7 @@ jobs:
         }
         echo "THORCAM_NET_BIN_PATH=$env:THORCAM_NET_BIN_PATH"
 
-        python -m pytest thorcam/tests
+        python -m pytest --timeout=60 thorcam/tests
 
   docs:
     runs-on: ubuntu-18.04
