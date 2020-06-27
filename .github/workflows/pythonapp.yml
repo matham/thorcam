@@ -46,9 +46,9 @@ jobs:
       if: steps.get-cahced-dependencies.outputs.cache-hit != 'true'
       run: |
         Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces-Rev_G.zip" -OutFile "Scientific_Camera_Interfaces-Rev_G.zip"
-        7z x "Scientific_Camera_Interfaces-Rev_G.zip"
     - name: Install
       run: |
+        7z x "Scientific_Camera_Interfaces-Rev_G.zip"
         python -m pip install --upgrade pip virtualenv wheel setuptools pytest pytest-timeout
         python -m pip install -e .
     - name: Make wheel
