@@ -41,15 +41,15 @@ jobs:
       id: get-cahced-dependencies
       uses: actions/cache@v2
       with:
-        path: Scientific_Camera_Interfaces-Rev_G.zip
-        key: Scientific_Camera_Interfaces-Rev_G.zip
+        path: Scientific_Camera_Interfaces-Rev_H.zip
+        key: Scientific_Camera_Interfaces-Rev_H.zip
     - name: Get dependencies
       if: steps.get-cahced-dependencies.outputs.cache-hit != 'true'
       run: |
-        Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces-Rev_G.zip" -OutFile "Scientific_Camera_Interfaces-Rev_G.zip"
+        Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces-Rev_H.zip" -OutFile "Scientific_Camera_Interfaces-Rev_H.zip"
     - name: Install
       run: |
-        7z x "Scientific_Camera_Interfaces-Rev_G.zip"
+        7z x "Scientific_Camera_Interfaces-Rev_H.zip"
         python -m pip install --upgrade pip virtualenv wheel setuptools pytest pytest-timeout
         python -m pip install -e .
     - name: Make wheel
