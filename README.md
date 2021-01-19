@@ -5,6 +5,8 @@ ThorCam
 
 Python interface for the Thor scientific Cameras using .Net.
 
+This library does **not** support the **DCx cameras**, only the **scientific cameras**.
+
 For more information and to get started: https://matham.github.io/thorcam/index.html.
 
 To install https://matham.github.io/thorcam/installation.html.
