@@ -3,13 +3,15 @@ ThorCam
 
 [![Github Build Status](https://github.com/matham/thorcam/workflows/Python%20application/badge.svg)](https://github.com/matham/thorcam/actions)
 
-Python interface for the Thor scientific Cameras using .Net.
+A Python interface to the Thor scientific Cameras using `.Net`.
 
 This library does **not** support the **DCx cameras**, only the **scientific cameras**.
 
-For more information and to get started: https://matham.github.io/thorcam/index.html.
+See the [docs](https://matham.github.io/thorcam/index.html) for more information
+and to get started.
 
-To install https://matham.github.io/thorcam/installation.html.
+To install in **Anaconda** or **native Python** see the
+[installation instructions](https://matham.github.io/thorcam/installation.html).
 
 Basic example
 -------------
@@ -39,9 +41,9 @@ Then use the camera:
 >>> cam.start_cam_process()
 >>> # get list of attached cams
 >>> cam.refresh_cameras()
-Received "serials" with value "['05761']"
+Received "serials" with value "['03756']"
 >>> # open the camera
->>> cam.open_camera('05761')
+>>> cam.open_camera('03756')
 Received "settings" with value "{'binning_x': 1, 'binning_x_range': [1, 24], ..."
 Received "cam_open" with value "None"
 >>> cam.exposure_range
