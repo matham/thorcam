@@ -50,8 +50,8 @@ interfere with the dependencies. Do as follows::
 
 then test ``thorcam`` as shown below.
 
-Test install
-------------
+Test install / troubleshooting
+------------------------------
 
 To test if it was properly installed, run the following command::
 
@@ -64,6 +64,29 @@ this should print a list of serial numbers of cameras connected. If it also prin
 
 just ignore it as it doesn't seem to affect the camera functioning and it's unclear the
 source of this.
+
+Connection errors
+*****************
+
+``thorcam`` uses a second internal process to run any camera commands. So we use a internal
+socket to communicate with the other process. If you get an error such as::
+
+    ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+this could mean the install failed, in which case make sure to follow the above install instructions exactly.
+If hat doesn't work it likely means that windows (or less likely some secondary firewall) is blocking the
+internal socket connection.
+
+This is likely because Windows prompted you to allow Python access on your network and you didn't
+(search for ``"windows firewall has blocked some features"`` to see the example message).
+To fix that you'll have to manually allow it access as follows:
+
+* Go to Control Panel > System and Security > Windows Defender Firewall >
+  Allow an app or feature through Windows Defender Firewall.
+* Click “Change Settings” to unlock the settings.
+* Locate the application (Python) in the list, and then click the Public or Private
+  checkboxes to control whether it’s allowed or disallowed, respectively. Checking
+  private should likely be sufficient as you're probably on a private network.
 
 Installing from source
 ----------------------
