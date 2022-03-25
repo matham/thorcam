@@ -93,7 +93,7 @@ jobs:
         }
         echo "THORCAM_NET_BIN_PATH=$env:THORCAM_NET_BIN_PATH"
 
-        python -m pytest --timeout=60 thorcam/tests
+        python -m pytest --timeout=300 thorcam/tests
 
   docs:
     runs-on: ubuntu-latest
