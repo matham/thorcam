@@ -4,11 +4,11 @@ on: [push, pull_request]
 
 jobs:
   lint_test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install dependencies
@@ -23,12 +23,12 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: [ '3.6', '3.7', '3.8' ]
+        python: [ '3.7', '3.8', '3.9', '3.10' ]
         arch: ['x64', 'x86']
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.arch }}
@@ -41,16 +41,17 @@ jobs:
       id: get-cahced-dependencies
       uses: actions/cache@v2
       with:
-        path: Scientific_Camera_Interfaces-Rev_H.zip
-        key: Scientific_Camera_Interfaces-Rev_H.zip
+        path: Scientific_Camera_Interfaces_Windows-2.0.2.zip
+        key: Scientific_Camera_Interfaces_Windows-2.0.2.zip
     - name: Get dependencies
       if: steps.get-cahced-dependencies.outputs.cache-hit != 'true'
       run: |
-        Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces-Rev_H.zip" -OutFile "Scientific_Camera_Interfaces-Rev_H.zip"
+        Invoke-WebRequest "https://www.thorlabs.com/software/THO/ThorCam/Programming/Scientific_Camera_Interfaces_Windows-2.0.2.zip" -OutFile "Scientific_Camera_Interfaces_Windows-2.0.2.zip"
     - name: Install
       run: |
-        7z x "Scientific_Camera_Interfaces-Rev_H.zip"
+        7z x "Scientific_Camera_Interfaces_Windows-2.0.2.zip"
         python -m pip install --upgrade pip virtualenv wheel setuptools pytest pytest-timeout
+        pip install --pre pythonnet
         python -m pip install -e .
     - name: Make wheel
       run: |
@@ -68,7 +69,7 @@ jobs:
         name: py_wheel
         path: dist
     - name: Upload to GitHub Release
-      uses: softprops/action-gh-release@78c309ef59fdb9557cd6574f2e0be552936ed728
+      uses: softprops/action-gh-release@v0.1.14
       if: startsWith(github.ref, 'refs/tags/')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -95,11 +96,11 @@ jobs:
         python -m pytest --timeout=60 thorcam/tests
 
   docs:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install
