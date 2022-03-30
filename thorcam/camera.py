@@ -235,6 +235,19 @@ class ThorCamClient(ThorCamBase):
 
     _client_thread = None
 
+    _process = None
+
+    process_connection_timeout = 10
+    """How long to wait after starting the internal process, without being able
+    to communicate with it before timing out.
+    """
+
+    process_connected = False
+    """A bool that is True after :meth:`start_cam_process` is called, only if
+    we have started the second process that controls the camera and we have a
+    connection to it.
+    """
+
     def _get_open_port(self):
         """Returns a available unused open port on the localhost.
         """
@@ -251,6 +264,8 @@ class ThorCamClient(ThorCamBase):
         """
         if self._server_thread is not None:
             return
+
+        self.process_connected = False
 
         if self.port is None:
             self.port = self._get_open_port()
@@ -270,6 +285,7 @@ class ThorCamClient(ThorCamBase):
         :param exc_info: If provided, the stderr string of the process.
         """
         self._server_thread = None
+        self._process = None
         if e:
             self.handle_exception(e, exc_info)
 
@@ -282,7 +298,7 @@ class ThorCamClient(ThorCamBase):
         """The thread that runs the camera server process.
         """
         try:
-            process = ThorCamProcess(
+            process = self._process = ThorCamProcess(
                 target=camera_dot_net_process_entry,
                 args=(
                     logging.getLogger().getEffectiveLevel(),
@@ -347,6 +363,7 @@ class ThorCamClient(ThorCamBase):
         """The thread that runs the client connection to the server.
         """
         timeout = self.timeout
+        process_timeout = self.process_connection_timeout
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -365,9 +382,10 @@ class ThorCamClient(ThorCamBase):
                     sock.connect(server_address)
                     break
                 except ConnectionRefusedError:
-                    if clock() - ts > 5:
+                    if clock() - ts > process_timeout:
                         raise
 
+            self.process_connected = True
             done = False
 
             while not done:
@@ -448,19 +466,34 @@ class ThorCamClient(ThorCamBase):
                 msg_buff = b''
         return msg_len, msg_buff, msg, value
 
-    def stop_cam_process(self, join=False):
+    def stop_cam_process(self, join=False, kill_delay=None):
         """Requests that the server and client threads/process close.
         If ``join``, we block here until the threads/process exit.
+        If ``kill_delay`` is not None, then we join for that long and terminate
+        the process afterwards if it's not completed.
+
+        Returns True only if the process was terminated manually, otherwise it
+        returns False.
         """
-        if self._server_thread is not None:
+        client = self._client_thread
+        process_thread = self._server_thread
+        if process_thread is not None:
             self.send_camera_request('eof')
+
         if join:
-            client = self._client_thread
-            process_thread = self._server_thread
             if client is not None:
                 client.join()
             if process_thread is not None:
+                process_thread.join(timeout=kill_delay)
+
+                process = self._process
+                if process is not None:
+                    process.terminate()
+                    process_thread.join()
+                    return True
+
                 process_thread.join()
+        return False
 
 
 class ThorCam(ThorCamClient):
