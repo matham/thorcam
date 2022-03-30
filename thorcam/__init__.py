@@ -4,7 +4,7 @@
 Python interface to the .NET Thor cameras.
 """
 
-__version__ = '0.1.5.dev0'
+__version__ = '0.1.5'
 
 import sys
 import os
