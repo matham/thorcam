@@ -51,7 +51,10 @@ def test_list_cams():
 
         old_val = cam.serials
         cam.refresh_cameras()
-        time.sleep(2)
+        ts = time.perf_counter()
+        while cam.serials is old_val and time.perf_counter() - ts < 60:
+            time.sleep(.1)
+
         assert cam.serials is not old_val
     finally:
         cam.stop_cam_process(join=True, kill_delay=5)
