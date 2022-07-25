@@ -8,6 +8,7 @@ __version__ = '0.1.6.dev0'
 
 import sys
 import os
+import site
 from os.path import join, isdir
 
 __all__ = ('dep_bins', )
@@ -26,11 +27,13 @@ provides these binaries at that path, or they can be manually added there.
 It is read only.
 '''
 
-_bins = os.path.abspath(join(sys.prefix, 'share', 'thorcam', 'bin'))
 _env_bins = os.environ.get('THORCAM_NET_BIN_PATH', None)
 if _env_bins is not None and isdir(os.path.abspath(_env_bins)):
     dep_bins = [os.path.abspath(_env_bins)]
-elif isdir(_bins):
-    dep_bins = [_bins]
 elif hasattr(sys, '_MEIPASS'):
     dep_bins = [os.path.abspath(sys._MEIPASS)]
+else:
+    for d in [sys.prefix, site.USER_BASE]:
+        _bins = os.path.abspath(join(d, 'share', 'thorcam', 'bin'))
+        if isdir(_bins):
+            dep_bins.append(_bins)
