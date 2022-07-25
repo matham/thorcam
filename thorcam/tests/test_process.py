@@ -6,7 +6,7 @@ class MyThorCam(ThorCam):
 
     __last_exception = None
 
-    process_connection_timeout = 20
+    process_connection_timeout = 60
 
     def handle_exception(self, e, exc_info):
         super().handle_exception(e, exc_info)
@@ -18,8 +18,8 @@ class MyThorCam(ThorCam):
 
     def wait_until_connected(self):
         ts = time.perf_counter()
-        while not self.process_connected and time.perf_counter() - ts < 20:
-            time.sleep(1)
+        while not self.process_connected and time.perf_counter() - ts < 60:
+            time.sleep(.1)
 
         if not self.process_connected:
             raise TimeoutError
