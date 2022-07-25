@@ -59,7 +59,8 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     packages=find_packages(),
-    install_requires=['ffpyplayer', 'pythonnet', 'numpy', 'ruamel.yaml'],
+    install_requires=[
+        'ffpyplayer', 'pythonnet>=3.0.0rc4', 'numpy', 'ruamel.yaml'],
     data_files=get_wheel_data(),
     distclass=BinaryDistribution,
     project_urls={
