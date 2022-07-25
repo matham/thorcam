@@ -208,30 +208,38 @@ class TSICamera(ThorCamBase):
         d['frame_queue_size'] = cam.get_MaximumNumberOfFramesToQueue()
         d['trigger_count'] = cam.get_FramesPerTrigger_zeroForUnlimited()
         hw_mode = cam.get_OperationMode() == \
-                  self.tsi_interface.OperationMode.HardwareTriggered
+            self.tsi_interface.OperationMode.HardwareTriggered
         d['trigger_type'] = self.supported_triggers[1 if hw_mode else 0]
 
         rang = cam.get_GainRange()
         d['gain_range'] = rang.Minimum, rang.Maximum
-        d['gain'] = cam.get_Gain()
+        if not d['gain_range'][1]:
+            d['gain'] = 0
+        else:
+            d['gain'] = cam.get_Gain()
 
         rang = cam.get_BlackLevelRange()
         d['black_level_range'] = rang.Minimum, rang.Maximum
-        d['black_level'] = cam.get_BlackLevel()
+        if not d['black_level_range'][1]:
+            d['black_level'] = 0
+        else:
+            d['black_level'] = cam.get_BlackLevel()
 
+        freqs = []
         if cam.GetIsDataRateSupported(
                 self.tsi_interface.DataRate.ReadoutSpeed20MHz):
-            if cam.GetIsDataRateSupported(
-                    self.tsi_interface.DataRate.ReadoutSpeed40MHz):
-                d['supported_freqs'] = ['20 MHz', '40 MHz']
-            else:
-                d['supported_freqs'] = ['20 MHz', ]
-        else:
-            if cam.GetIsDataRateSupported(self.tsi_interface.DataRate.FPS50):
-                d['supported_freqs'] = ['30 FPS', '50 FPS']
-            else:
-                d['supported_freqs'] = ['30 FPS', ]
-        d['freq'] = self._freqs_to_str_map[cam.get_DataRate()]
+            freqs.append('20 MHz')
+        if cam.GetIsDataRateSupported(
+                self.tsi_interface.DataRate.ReadoutSpeed40MHz):
+            freqs.append('40 MHz')
+        if cam.GetIsDataRateSupported(self.tsi_interface.DataRate.FPS30):
+            freqs.append('30 FPS')
+        if cam.GetIsDataRateSupported(self.tsi_interface.DataRate.FPS50):
+            freqs.append('50 FPS')
+        d['supported_freqs'] = freqs
+
+        if freqs:
+            d['freq'] = self._freqs_to_str_map[cam.get_DataRate()]
 
         if cam.GetIsTapsSupported(self.tsi_interface.Taps.QuadTap):
             d['supported_taps'] = ['1', '2', '4']
@@ -242,7 +250,7 @@ class TSICamera(ThorCamBase):
         else:
             d['supported_taps'] = []
 
-        if cam.GetIsTapsSupported(self.tsi_interface.Taps.SingleTap):
+        if d['supported_taps']:
             d['taps'] = self._taps_to_str_map[cam.get_Taps()]
         else:
             d['taps'] = ''
