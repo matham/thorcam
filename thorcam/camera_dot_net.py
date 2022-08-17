@@ -374,6 +374,8 @@ class TSICamera(ThorCamBase):
         count = frame.FrameNumber
         h = frame.ImageData.Height_pixels
         w = frame.ImageData.Width_pixels
+        frame_data = frame.ImageData.GetType().GetProperty(
+            'ImageData_monoOrBGR').GetValue(frame.ImageData)
         if self._color_processor is not None:
             from Thorlabs.TSI import ColorInterfaces
             demosaicked_data = Array.CreateInstance(UInt16, h * w * 3)
@@ -384,7 +386,7 @@ class TSICamera(ThorCamBase):
             self._demosaic.Demosaic(
                 w, h, Int32(0), Int32(0), cam.ColorFilterArrayPhase,
                 fmt, ColorInterfaces.ColorSensorType.Bayer,
-                Int32(cam.BitDepth), frame.ImageData.ImageData_monoOrBGR,
+                Int32(cam.BitDepth), frame_data,
                 demosaicked_data)
 
             self._color_processor.Transform48To48(demosaicked_data, fmt,
@@ -395,7 +397,7 @@ class TSICamera(ThorCamBase):
             data = as_numpy_array(processed_data)
         else:
             pixel_fmt = 'gray16le'
-            data = as_numpy_array(frame.ImageData.ImageData_monoOrBGR)
+            data = as_numpy_array(frame_data)
         # img = Image(
         #     plane_buffers=[data.tobytes()],
         #     pix_fmt=pixel_fmt, size=(w, h))
