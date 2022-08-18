@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThorCam Examples &mdash; ThorCam  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The ThorCam API" href="api/api.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ThorCam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ThorCam Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">The ThorCam API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ThorCam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ThorCam Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="thorcam-examples">
+<span id="id1"></span><h1>ThorCam Examples<a class="headerlink" href="#thorcam-examples" title="Permalink to this heading"></a></h1>
+<p>First create a subclass that prints the camera results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">thorcam.camera</span> <span class="kn">import</span> <span class="n">ThorCam</span>
+<span class="k">class</span> <span class="nc">MyThorCam</span><span class="p">(</span><span class="n">ThorCam</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">received_camera_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyThorCam</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">received_camera_response</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;image&#39;</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Received &quot;</span><span class="si">{}</span><span class="s1">&quot; with value &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">got_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">queued_count</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Received image &quot;</span><span class="si">{}</span><span class="s1">&quot; with time &quot;</span><span class="si">{}</span><span class="s1">&quot; and counts &quot;</span><span class="si">{}</span><span class="s1">&quot;, &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">queued_count</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Then use the camera:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># create camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span> <span class="o">=</span> <span class="n">MyThorCam</span><span class="p">()</span>
+<span class="go">&lt;__main__.MyThorCam at 0x25a72f6a748&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># start the server etc.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">start_cam_process</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># get list of attached cams</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">refresh_cameras</span><span class="p">()</span>
+<span class="go">Received &quot;serials&quot; with value &quot;[&#39;03756&#39;]&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># open the camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">open_camera</span><span class="p">(</span><span class="s1">&#39;03756&#39;</span><span class="p">)</span>
+<span class="go">Received &quot;settings&quot; with value &quot;{&#39;binning_x&#39;: 1, &#39;binning_x_range&#39;: [1, 24], ...&quot;</span>
+<span class="go">Received &quot;cam_open&quot; with value &quot;None&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">exposure_range</span>
+<span class="go">[0.0, 1000000.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">exposure_ms</span>
+<span class="go">241.948</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># update the exposure value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">set_setting</span><span class="p">(</span><span class="s1">&#39;exposure_ms&#39;</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+<span class="go">Received &quot;settings&quot; with value &quot;{&#39;exposure_ms&#39;: 150.0}&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">exposure_ms</span>
+<span class="go">150.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># now play the camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">play_camera</span><span class="p">()</span>
+<span class="go">Received &quot;playing&quot; with value &quot;True&quot;</span>
+<span class="go">Received image &quot;&lt;ffpyplayer.pic.Image object at 0x000001D1D8D67900&gt;&quot; with time &quot;2e-07&quot; and counts &quot;1&quot;, &quot;1&quot;</span>
+<span class="go">Received image &quot;&lt;ffpyplayer.pic.Image object at 0x000001D1D8D67990&gt;&quot; with time &quot;0.2310473&quot; and counts &quot;2&quot;, &quot;1&quot;</span>
+<span class="go">Received image &quot;&lt;ffpyplayer.pic.Image object at 0x000001D1D8D67A68&gt;&quot; with time &quot;0.4735178&quot; and counts &quot;3&quot;, &quot;1&quot;</span>
+<span class="go">Received image &quot;&lt;ffpyplayer.pic.Image object at 0x000001D1D8D67B40&gt;&quot; with time &quot;0.7157285&quot; and counts &quot;4&quot;, &quot;1&quot;</span>
+<span class="go">Received image &quot;&lt;ffpyplayer.pic.Image object at 0x000001D1D8D67C18&gt;&quot; with time &quot;0.9583721&quot; and counts &quot;5&quot;, &quot;1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># now stop playing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">stop_playing_camera</span><span class="p">()</span>
+<span class="go">Received &quot;playing&quot; with value &quot;False&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># close the camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">close_camera</span><span class="p">()</span>
+<span class="go">Received &quot;cam_closed&quot; with value &quot;None&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># close the server and everything</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cam</span><span class="o">.</span><span class="n">stop_cam_process</span><span class="p">(</span><span class="n">join</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/api.html" class="btn btn-neutral float-right" title="The ThorCam API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Matthew Einhorn.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

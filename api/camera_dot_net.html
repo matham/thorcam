@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thor camera internal interface &mdash; ThorCam  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Thor camera interface" href="camera.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> ThorCam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">ThorCam Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">The ThorCam API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="thorcam.html">Thor Cam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera.html">Thor camera interface</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Thor camera internal interface</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ThorCam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">The ThorCam API</a> &raquo;</li>
+      <li>Thor camera internal interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/camera_dot_net.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-thorcam.camera_dot_net"></span><section id="thor-camera-internal-interface">
+<h1>Thor camera internal interface<a class="headerlink" href="#thor-camera-internal-interface" title="Permalink to this heading"></a></h1>
+<p>When run, it creates a server that accepts requests from a client, pass it
+on to the camera, and then passes camera responses back to the client.</p>
+<p>This module is intended to be run as a sub-process because running it in the
+main process may cause incompatibility with other project, given that special
+.NET binaries are loaded.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">thorcam.camera_dot_net.</span></span><span class="sig-name descname"><span class="pre">TSICamera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsi_sdk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsi_interface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsi_color_sdk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsi_demosaicker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="camera.html#thorcam.camera.ThorCamBase" title="thorcam.camera.ThorCamBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThorCamBase</span></code></a></p>
+<p>The interface to the Thor scientific camera.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.camera_run">
+<span class="sig-name descname"><span class="pre">camera_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_cam_queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_cam_queue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.camera_run" title="Permalink to this definition"></a></dt>
+<dd><p>The thread that controls the camera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_cam_queue</strong> – The <code class="docutils literal notranslate"><span class="pre">Queue</span></code> over which the server sends requests
+to the client.</p></li>
+<li><p><strong>from_cam_queue</strong> – The <code class="docutils literal notranslate"><span class="pre">Queue</span></code> over which the client sends
+requests to the server.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.camera_thread">
+<span class="sig-name descname"><span class="pre">camera_thread</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.camera_thread" title="Permalink to this definition"></a></dt>
+<dd><p>Internal camera thread.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.from_cam_queue">
+<span class="sig-name descname"><span class="pre">from_cam_queue</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.from_cam_queue" title="Permalink to this definition"></a></dt>
+<dd><p>The queue that the camera uses to send requests to the server.</p>
+<p>The camera queue may send the following to the client:
+<cite>exception</cite>, <cite>cam_closed</cite>, <cite>image</cite>, <cite>playing</cite>, <cite>cam_open</cite>,
+<cite>setting</cite>, or <cite>settings</cite>.</p>
+<p>See <a class="reference internal" href="#thorcam.camera_dot_net.ThorCamServer" title="thorcam.camera_dot_net.ThorCamServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThorCamServer</span></code></a> for details.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.playing">
+<span class="sig-name descname"><span class="pre">playing</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.playing" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the camera is currently playing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.read_frame">
+<span class="sig-name descname"><span class="pre">read_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.read_frame" title="Permalink to this definition"></a></dt>
+<dd><p>Reads a image from the camera, if available, and returns it.</p>
+<p>If available, it returns
+<code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">fmt,</span> <span class="pre">(w,</span> <span class="pre">h),</span> <span class="pre">count,</span> <span class="pre">queued_count,</span> <span class="pre">t)</span></code>, otherwise, it returns
+None. See <a class="reference internal" href="#thorcam.camera_dot_net.ThorCamServer" title="thorcam.camera_dot_net.ThorCamServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThorCamServer</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.read_settings">
+<span class="sig-name descname"><span class="pre">read_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.read_settings" title="Permalink to this definition"></a></dt>
+<dd><p>Reads all the camera settings and returns it as a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.send_message">
+<span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.send_message" title="Permalink to this definition"></a></dt>
+<dd><p>Send request to the camera.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.serial">
+<span class="sig-name descname"><span class="pre">serial</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.serial" title="Permalink to this definition"></a></dt>
+<dd><p>The serial of this camera.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.to_cam_queue">
+<span class="sig-name descname"><span class="pre">to_cam_queue</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.to_cam_queue" title="Permalink to this definition"></a></dt>
+<dd><p>The queue that the server uses to send requests to the camera.</p>
+<p>Client may send the following keys to the camera:
+<cite>“close_cam”</cite>, <cite>“play”</cite>, <cite>“stop”</cite>, or <cite>“setting”</cite>.</p>
+<p>See <a class="reference internal" href="#thorcam.camera_dot_net.ThorCamServer" title="thorcam.camera_dot_net.ThorCamServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThorCamServer</span></code></a> for details.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.tsi_color_sdk">
+<span class="sig-name descname"><span class="pre">tsi_color_sdk</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.tsi_color_sdk" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET ColorProcessorSDK interface object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.tsi_demosaicker">
+<span class="sig-name descname"><span class="pre">tsi_demosaicker</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.tsi_demosaicker" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET Demosaicker module.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.tsi_interface">
+<span class="sig-name descname"><span class="pre">tsi_interface</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.tsi_interface" title="Permalink to this definition"></a></dt>
+<dd><p>The .NET interface. See <a class="reference internal" href="#thorcam.camera_dot_net.ThorCamServer.tsi_interface" title="thorcam.camera_dot_net.ThorCamServer.tsi_interface"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ThorCamServer.tsi_interface</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.tsi_sdk">
+<span class="sig-name descname"><span class="pre">tsi_sdk</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.tsi_sdk" title="Permalink to this definition"></a></dt>
+<dd><p>The .NET sdk interface. See <a class="reference internal" href="#thorcam.camera_dot_net.ThorCamServer.tsi_sdk" title="thorcam.camera_dot_net.ThorCamServer.tsi_sdk"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ThorCamServer.tsi_sdk</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.verify_setting">
+<span class="sig-name descname"><span class="pre">verify_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">playing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_cam_queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.verify_setting" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether the setting can be set currently, given the
+camera’s state. Otherwise, it sends a error message to the server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.TSICamera.write_setting">
+<span class="sig-name descname"><span class="pre">write_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.TSICamera.write_setting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the camera setting and returns any changed settings as a dict.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">thorcam.camera_dot_net.</span></span><span class="sig-name descname"><span class="pre">ThorCamServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thor_bin_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The class that runs the server and controls the camera.</p>
+<p>The following server messages are supported:</p>
+<dl class="field-list simple">
+<dt class="field-odd">From client</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>“close_cam”</cite>:</dt><dd><p>The camera should be closed and the object destroyed.</p>
+</dd>
+<dt><cite>“play”</cite>:</dt><dd><p>Camera should start playing.</p>
+</dd>
+<dt><cite>“stop”</cite>:</dt><dd><p>Camera should stop playing.</p>
+</dd>
+<dt><cite>“setting”</cite>: value is a tuple</dt><dd><p>Sets a setting in the camera. During playing, only
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.ThorCamBase.play_settings</span></code> may be set.
+The <code class="docutils literal notranslate"><span class="pre">value</span></code> is a tuple of setting name and its desired value.</p>
+</dd>
+<dt><cite>“open_cam”</cite>: Value is the serial</dt><dd><p>That the camera should be opened. <code class="docutils literal notranslate"><span class="pre">value</span></code> is the serial number
+string of the camera to be opened.</p>
+</dd>
+<dt><cite>“eof”</cite>: None</dt><dd><p>To close the server process and camera.</p>
+</dd>
+<dt><cite>“serials”</cite>: None</dt><dd><p>Requests the list of cameras attached. It’ll be sent back to the
+client.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">To client</dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>exception</cite>: tuple of string</dt><dd><p>Camera had an exception. The <code class="docutils literal notranslate"><span class="pre">value</span></code> is a tuple of <code class="docutils literal notranslate"><span class="pre">e</span></code> and
+<code class="docutils literal notranslate"><span class="pre">exc_info</span></code> string.</p>
+</dd>
+<dt><cite>cam_open</cite>: None</dt><dd><p>Sent when the camera has been successfully opened.</p>
+</dd>
+<dt><cite>cam_closed</cite>: None</dt><dd><p>Camera closed and camera thread has exited.</p>
+</dd>
+<dt><cite>image</cite>: <code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">fmt,</span> <span class="pre">(w,</span> <span class="pre">h),</span> <span class="pre">count,</span> <span class="pre">queued_count,</span> <span class="pre">t)</span></code></dt><dd><p>Sent when the camera has processed a new image. <code class="docutils literal notranslate"><span class="pre">value</span></code> is a
+tuple of image data and metadata.
+<code class="docutils literal notranslate"><span class="pre">data</span></code> is the <code class="docutils literal notranslate"><span class="pre">bytes</span></code> image data. <code class="docutils literal notranslate"><span class="pre">fmt</span></code> is the pixel format.
+<code class="docutils literal notranslate"><span class="pre">(w,</span> <span class="pre">h)</span></code> is the image size. <code class="docutils literal notranslate"><span class="pre">count</span></code> is the image number.
+<code class="docutils literal notranslate"><span class="pre">queued_count</span></code> is the number of frames the camera still has to
+process (i.e. need to be send from the hardware). <code class="docutils literal notranslate"><span class="pre">t</span></code> is the
+image timestamp.</p>
+</dd>
+<dt><cite>playing</cite>: bool</dt><dd><p>Whether the camera is playing. <code class="docutils literal notranslate"><span class="pre">value</span></code> is a bool indicating
+whether it started stopped playing.</p>
+</dd>
+<dt><cite>settings</cite>: dict of <code class="docutils literal notranslate"><span class="pre">setting:</span> <span class="pre">value</span></code></dt><dd><p>The settings value. A dict of settings and their values. Sent after
+camera is opened</p>
+</dd>
+<dt><cite>setting</cite>: dict of <code class="docutils literal notranslate"><span class="pre">setting:</span> <span class="pre">value</span></code></dt><dd><p>The settings value. A dict of settings and their values. Send when
+a setting is updated.</p>
+</dd>
+<dt><cite>“serials”</cite>: List of serials</dt><dd><p>Sends the list of cameras attached as list of serial number
+strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.decode_data">
+<span class="sig-name descname"><span class="pre">decode_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_len</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.decode_data" title="Permalink to this definition"></a></dt>
+<dd><p>Decodes binary message from the client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.get_tsi_cams">
+<span class="sig-name descname"><span class="pre">get_tsi_cams</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.get_tsi_cams" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of serial numbers of the cameras attached.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.load_tsi">
+<span class="sig-name descname"><span class="pre">load_tsi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thor_bin_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.load_tsi" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the Thor .NET binaries and adds them to the PATH.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.port">
+<span class="sig-name descname"><span class="pre">port</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.port" title="Permalink to this definition"></a></dt>
+<dd><p>The server port to open. Set by the process when the class is
+instantiated. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.camera.port</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.process_cam_message">
+<span class="sig-name descname"><span class="pre">process_cam_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.process_cam_message" title="Permalink to this definition"></a></dt>
+<dd><p>Handles a message from the camera and passes it on to the client
+if requested.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.process_client_message">
+<span class="sig-name descname"><span class="pre">process_client_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.process_client_message" title="Permalink to this definition"></a></dt>
+<dd><p>Handles a message received from the client.
+It responds or passes it on to the camera.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.read_msg">
+<span class="sig-name descname"><span class="pre">read_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_buff</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.read_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Reads data from the client and decodes it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.send_msg">
+<span class="sig-name descname"><span class="pre">send_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.send_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Sends message to the client.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.server">
+<span class="sig-name descname"><span class="pre">server</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.server" title="Permalink to this definition"></a></dt>
+<dd><p>The server address to open. Set by the process when the class is
+instantiated. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.camera.server</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.server_run">
+<span class="sig-name descname"><span class="pre">server_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.server_run" title="Permalink to this definition"></a></dt>
+<dd><p>The mean server thread.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.server_thread">
+<span class="sig-name descname"><span class="pre">server_thread</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.server_thread" title="Permalink to this definition"></a></dt>
+<dd><p>The server thread object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.thor_bin_path">
+<span class="sig-name descname"><span class="pre">thor_bin_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.thor_bin_path" title="Permalink to this definition"></a></dt>
+<dd><p>The full path to where the Thor .NET binaries are located.
+Set by the process when the class is
+instantiated. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.camera.thor_bin_path</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.timeout" title="Permalink to this definition"></a></dt>
+<dd><p>How long to wait wait on network requests, before checking the
+queues. Set by the process when the class is
+instantiated. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.camera.timeout</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.tsi_cam">
+<span class="sig-name descname"><span class="pre">tsi_cam</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.tsi_cam" title="Permalink to this definition"></a></dt>
+<dd><p>The <a class="reference internal" href="#thorcam.camera_dot_net.TSICamera" title="thorcam.camera_dot_net.TSICamera"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSICamera</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.tsi_color_sdk">
+<span class="sig-name descname"><span class="pre">tsi_color_sdk</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.tsi_color_sdk" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET ColorProcessorSDK interface object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.tsi_demosaicker">
+<span class="sig-name descname"><span class="pre">tsi_demosaicker</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.tsi_demosaicker" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET Demosaicker module.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.tsi_interface">
+<span class="sig-name descname"><span class="pre">tsi_interface</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.tsi_interface" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET interface object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="thorcam.camera_dot_net.ThorCamServer.tsi_sdk">
+<span class="sig-name descname"><span class="pre">tsi_sdk</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#thorcam.camera_dot_net.ThorCamServer.tsi_sdk" title="Permalink to this definition"></a></dt>
+<dd><p>The Thor .NET sdk object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="camera.html" class="btn btn-neutral float-left" title="Thor camera interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Matthew Einhorn.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

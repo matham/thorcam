@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; ThorCam  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" />
+    <link rel="prev" title="Welcome to ThorCam’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ThorCam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#native-python">Native Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anaconda">Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-install-troubleshooting">Test install / troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#connection-errors">Connection errors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-from-source">Installing from source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">ThorCam Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">The ThorCam API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ThorCam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<span id="install-thorcam"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p>Before using the Thor camera, the Thor drivers must be properly installed
+(this project has only been tested with USB cameras and doesn’t work for
+<strong>DCx cameras</strong>). See Thor’s website for instruction. Once the cameras are
+properly recognized by Windows, ThorCam can be installed with pip.</p>
+<section id="native-python">
+<h2>Native Python<a class="headerlink" href="#native-python" title="Permalink to this heading"></a></h2>
+<p>To install in a native Python installation just do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">thorcam</span>
+</pre></div>
+</div>
+<p>The wheels come with the thor .NET binaries required to access the cameras.</p>
+<p>If you run into issues, try installing it in a virtual environment because it’s likely
+some package installed in your environment has some binary conflict. Do as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span> <span class="n">setuptools</span> <span class="n">virtualenv</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">virtualenv</span> <span class="n">venv</span>
+<span class="c1"># if you&#39;re running in a windows cmd terminal do:</span>
+<span class="n">venv</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+<span class="c1"># otherwise if running in a bash-style terminal do:</span>
+<span class="n">source</span> <span class="n">venv</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">thorcam</span>
+</pre></div>
+</div>
+<p>then test <code class="docutils literal notranslate"><span class="pre">thorcam</span></code> as shown below.</p>
+</section>
+<section id="anaconda">
+<h2>Anaconda<a class="headerlink" href="#anaconda" title="Permalink to this heading"></a></h2>
+<p>To install in Anaconda, care must be taken to install all the dependencies from
+conda before installing <code class="docutils literal notranslate"><span class="pre">thorcam</span></code> itself from pip. Otherwise it won’t work.
+Also, it should be installed in its own environment in case other packages installed
+interfere with the dependencies. Do as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the environment</span>
+<span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">thor</span> <span class="n">python</span><span class="o">=</span><span class="mi">3</span>
+<span class="c1"># activate it</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">thor</span>
+<span class="c1"># install dependencies</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">numpy</span> <span class="n">ffpyplayer</span> <span class="n">pythonnet</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">clib</span>
+<span class="c1"># install throcam</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">thorcam</span>
+</pre></div>
+</div>
+<p>then test <code class="docutils literal notranslate"><span class="pre">thorcam</span></code> as shown below.</p>
+</section>
+<section id="test-install-troubleshooting">
+<h2>Test install / troubleshooting<a class="headerlink" href="#test-install-troubleshooting" title="Permalink to this heading"></a></h2>
+<p>To test if it was properly installed, run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;from thorcam.camera import ThorCam; import time; cam = ThorCam(); cam.start_cam_process(); cam.refresh_cameras(); time.sleep(5); print(cam.serials); cam.stop_cam_process(join=True)&quot;</span>
+</pre></div>
+</div>
+<p>this should print a list of serial numbers of cameras connected. If it also prints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EDT</span> <span class="n">pdv</span> <span class="nb">open</span> <span class="n">failed</span><span class="o">.</span>
+<span class="n">Check</span> <span class="n">board</span> <span class="n">installation</span> <span class="ow">and</span> <span class="n">unit</span> <span class="n">number</span><span class="p">,</span> <span class="ow">and</span> <span class="k">try</span> <span class="n">restarting</span> <span class="n">the</span> <span class="n">computer</span>
+</pre></div>
+</div>
+<p>just ignore it as it doesn’t seem to affect the camera functioning and it’s unclear the
+source of this.</p>
+<section id="connection-errors">
+<h3>Connection errors<a class="headerlink" href="#connection-errors" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">thorcam</span></code> uses a second internal process to run any camera commands. So we use a internal
+socket to communicate with the other process. If you get an error such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">ConnectionRefusedError</span><span class="p">:</span> <span class="p">[</span><span class="n">WinError</span> <span class="mi">10061</span><span class="p">]</span> <span class="n">No</span> <span class="n">connection</span> <span class="n">could</span> <span class="n">be</span> <span class="n">made</span> <span class="n">because</span> <span class="n">the</span> <span class="n">target</span> <span class="n">machine</span> <span class="n">actively</span> <span class="n">refused</span> <span class="n">it</span>
+</pre></div>
+</div>
+<p>this could mean the install failed, in which case make sure to follow the above install instructions exactly.
+If hat doesn’t work it likely means that windows (or less likely some secondary firewall) is blocking the
+internal socket connection.</p>
+<p>This is likely because Windows prompted you to allow Python access on your network and you didn’t
+(search for <code class="docutils literal notranslate"><span class="pre">&quot;windows</span> <span class="pre">firewall</span> <span class="pre">has</span> <span class="pre">blocked</span> <span class="pre">some</span> <span class="pre">features&quot;</span></code> to see the example message).
+To fix that you’ll have to manually allow it access as follows:</p>
+<ul class="simple">
+<li><p>Go to Control Panel &gt; System and Security &gt; Windows Defender Firewall &gt;
+Allow an app or feature through Windows Defender Firewall.</p></li>
+<li><p>Click “Change Settings” to unlock the settings.</p></li>
+<li><p>Locate the application (Python) in the list, and then click the Public or Private
+checkboxes to control whether it’s allowed or disallowed, respectively. Checking
+private should likely be sufficient as you’re probably on a private network.</p></li>
+</ul>
+</section>
+</section>
+<section id="installing-from-source">
+<h2>Installing from source<a class="headerlink" href="#installing-from-source" title="Permalink to this heading"></a></h2>
+<p>If installing from source rather then using a pre-compiled wheel containing all
+the thor binary dependencies, first make sure the thor binaries are manually
+provided. They can be found on Thor’s
+<a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=ThorCam">website</a>
+under “Windows SDK and Doc. for Scientific Cameras”. The dlls path must be
+provided to the library so it can load them.
+See <a class="reference internal" href="api/camera.html#thorcam.camera.ThorCamClient.thor_bin_path" title="thorcam.camera.ThorCamClient.thor_bin_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.camera.ThorCamClient.thor_bin_path</span></code></a> and <a class="reference internal" href="api/thorcam.html#thorcam.dep_bins" title="thorcam.dep_bins"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thorcam.dep_bins</span></code></a>
+for how we handle the dll path. Them do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">matham</span><span class="o">/</span><span class="n">thorcam</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ThorCam’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Matthew Einhorn.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
